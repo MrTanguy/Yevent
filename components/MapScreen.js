@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
+import supabase from '../services/SupabaseService'; // Assure-toi d'avoir configuré Supabase
+import { useFocusEffect } from '@react-navigation/native';
 
 const MapScreen = () => {
   const [location, setLocation] = useState(null);
+  const [events, setEvents] = useState([]); // État pour stocker les événements
   const [errorMsg, setErrorMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    (async () => {
+  const fetchData = async () => {
+    setIsLoading(true);
+    setErrorMsg(null);
+
+    try {
+      // Récupérer la permission pour accéder à la localisation
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Permission refusée pour accéder à la localisation.');
@@ -17,21 +24,34 @@ const MapScreen = () => {
         return;
       }
 
-      try {
-        const loc = await Location.getCurrentPositionAsync({});
-        setLocation({
-          latitude: loc.coords.latitude,
-          longitude: loc.coords.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
-      } catch (error) {
-        setErrorMsg('Erreur lors de la récupération de la localisation.');
-      } finally {
-        setIsLoading(false);
+      // Obtenir la localisation actuelle
+      const loc = await Location.getCurrentPositionAsync({});
+      setLocation({
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+
+      // Récupérer les événements depuis Supabase
+      const { data, error } = await supabase.getClient().from('events').select('*');
+      if (error) {
+        setErrorMsg('Erreur lors de la récupération des événements.');
+      } else {
+        setEvents(data);
       }
-    })();
-  }, []);
+    } catch (error) {
+      setErrorMsg('Erreur lors de la récupération de la localisation.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData(); // Appeler la fonction de récupération des données lorsque l'écran est actif
+    }, [])
+  );
 
   if (isLoading) {
     return (
@@ -52,7 +72,19 @@ const MapScreen = () => {
             region={location}
             showsUserLocation={true}
             showsMyLocationButton={true}
-          />
+          >
+            {events.map((event, index) => (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: event.lat,
+                  longitude: event.long,
+                }}
+                title={event.name}
+                description={event.address}
+              />
+            ))}
+          </MapView>
         ) : (
           <Text style={styles.errorText}>{errorMsg || 'Chargement...'}</Text>
         )}

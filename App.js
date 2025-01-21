@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MyStack } from './navigation/navigation';
 import { AuthNavigation } from './navigation/authNavigation';
-import { getAccessToken, setAccessToken } from './services/LocalStorage';
+import { getId, setId } from './services/LocalStorage';
 import { ActivityIndicator, View } from 'react-native';
 
 const Stack = createNativeStackNavigator();
@@ -12,23 +12,20 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  setAccessToken(null)
-
   const handleLogin = async (data) => {
     const id = data.session.user.id;
-    const accessToken = data.session.access_token;
-    await setAccessToken(accessToken);
+    await setId(id);
     setIsAuthenticated(true);
   };
 
   const handleLogout = async () => {
-    await setAccessToken(null);
+    await setId(null);
     setIsAuthenticated(false);
   };
 
   const checkAuthentication = async () => {
     try {
-      const token = await getAccessToken();
+      const token = await getId();
       if (token) {
         setIsAuthenticated(true);
       }
