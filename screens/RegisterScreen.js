@@ -1,17 +1,23 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert, Text, KeyboardAvoidingView } from 'react-native';
 import SvgBackground from '../components/SvgBackground';
 import supabase from '../services/SupabaseService';
 import TitleView from '../components/TitleView';
 
-export function LoginScreen({ navigation, onLogin }) {
+export function RegisterScreen({ navigation, onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match.');
+      return;
+    }
+
     try {
-      const { data, error } = await supabase.getClient().auth.signInWithPassword({
+      const { user, error } = await supabase.getClient().auth.signUp({
         email,
         password,
       });
@@ -19,18 +25,27 @@ export function LoginScreen({ navigation, onLogin }) {
       if (error) {
         Alert.alert('Error', error.message);
       } else {
-        onLogin(data);
+        const { data, error } = await supabase.getClient().auth.signInWithPassword({
+            email,
+            password,
+        });
+
+        if (error) {
+            Alert.alert('Error', error.message);
+        } else {
+            onLogin(data);
+        }
       }
     } catch (err) {
       console.error(err);
-      Alert.alert('Error', 'Something went wrong.');
+      Alert.alert('Error', 'Something went wrong during registration.');
     }
   };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <SvgBackground />
-      <TitleView title="Login" />
+      <TitleView title="Register" />
       <View style={styles.container}>
         <TextInput
           style={styles.input}
@@ -46,16 +61,22 @@ export function LoginScreen({ navigation, onLogin }) {
           onChangeText={setPassword}
           secureTextEntry
         />
-        <Button title="Login" onPress={handleLogin} color="#FBAE3C" />
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+        />
+        <Button title="Register" onPress={handleRegister} color="#FBAE3C" />
       </View>
-      <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>New here?</Text>
-        <Button title="Register" onPress={() => navigation.navigate('Register')} color="#FBAE3C" />
+      <View style={styles.loginContainer}>
+        <Text style={styles.loginText}>Already have an account?</Text>
+        <Button title="Login" onPress={() => navigation.navigate('Login')} color="#FBAE3C" />
       </View>
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -78,13 +99,13 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     marginTop: 25,
   },
-  registerContainer: {
+  loginContainer: {
     position: 'absolute',
     bottom: '8%',
     width: '100%',
     alignItems: 'center',
   },
-  registerText: {
+  loginText: {
     marginBottom: 10,
     fontSize: 16,
     color: '#333',
