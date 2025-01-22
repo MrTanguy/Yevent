@@ -1,28 +1,74 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput, Button } from 'react-native';
+import supabase from '../services/SupabaseService';
 
-const EventCard = ({ title, address, dateTime, onJoin, isJoined }) => {
-  const [joined, setJoined] = useState(false);
+const EventCard = ({ title, address, dateTime, isJoined, eventId, userId }) => {
+  const [joined, setJoined] = useState(isJoined);
+  const [showModal, setShowModal] = useState(false);
+  const [numberOfSeats, setNumberOfSeats] = useState(1);
 
   const handleJoin = () => {
-    setJoined(true);
-    onJoin();
+    setShowModal(true);
+  };
+
+  const handleConfirmJoin = async () => {
+
+    const { data, error } = await supabase
+      .getClient()
+      .from('users_events')
+      .insert([
+        {
+          user_id: userId,
+          event_id: eventId,
+          nb: numberOfSeats,
+        },
+      ]);
+
+    if (error) {
+      console.log('Erreur lors de l\'inscription:', error.message);
+    } else {
+      setJoined(true);
+      setShowModal(false);
+    }
   };
 
   return (
-      <View style={styles.card}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.address}>{address}</Text>
-        <Text style={styles.dateTime}>{dateTime}</Text>
-        <TouchableOpacity
-          style={styles.joinButton}
-          onPress={onJoin}
-          disabled={isJoined}  // Désactiver le bouton si l'événement est déjà rejoint
-        >
-          <Text style={styles.joinButtonText}>{isJoined ? 'Joined' : 'Join'}</Text>
-        </TouchableOpacity>
-      </View>
-    );
+    <View style={styles.card}>
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.address}>{address}</Text>
+      <Text style={styles.dateTime}>{dateTime}</Text>
+
+      <TouchableOpacity
+        style={[styles.joinButton, joined && styles.joinedButton]}
+        onPress={handleJoin}
+        disabled={joined}
+      >
+        <Text style={styles.joinButtonText}>{joined ? 'Joined' : 'Join'}</Text>
+      </TouchableOpacity>
+
+      {/* Modale pour choisir le nombre de places */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showModal}
+        onRequestClose={() => setShowModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Number of Seats</Text>
+            <TextInput
+              style={styles.input}
+              keyboardType="numeric"
+              value={String(numberOfSeats)}
+              onChangeText={(text) => setNumberOfSeats(parseInt(text) || 1)}
+            />
+            <Button title="Confirm" onPress={handleConfirmJoin} />
+            <Button title="Cancel" onPress={() => setShowModal(false)} />
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -30,12 +76,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     padding: 15,
     borderRadius: 10,
-    marginBottom: 15,  // Espacement plus important entre les cartes
+    marginBottom: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5, // Ombre pour Android
+    elevation: 5,
   },
   title: {
     fontSize: 18,
@@ -53,7 +99,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   joinButton: {
-    backgroundColor: '#46A74D',
+    backgroundColor: '#FFA500',
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 20,
@@ -61,12 +107,36 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   joinedButton: {
-    backgroundColor: '#A5D6A7',
+    backgroundColor: '#46A74D',
   },
   joinButtonText: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparence de fond
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    width: 300,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  input: {
+    borderBottomWidth: 1,
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    fontSize: 16,
+    height: 40,
   },
 });
 

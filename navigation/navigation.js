@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen } from '../screens/HomeScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
-import { ReservationsScreen } from '../screens/ReservationsScreen';
+import { EventsScreen } from '../screens/EventsScreen';
 import { Button } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -11,6 +11,7 @@ const Tab = createBottomTabNavigator();
 export function MyStack({ onLogout }) {
   return (
     <Tab.Navigator
+      initialRouteName="Home"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -18,7 +19,7 @@ export function MyStack({ onLogout }) {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
-          } else if (route.name === 'Reservations') {
+          } else if (route.name === 'Events') {
             iconName = focused ? 'calendar' : 'calendar-outline';
           }
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -41,8 +42,8 @@ export function MyStack({ onLogout }) {
         tabBarShowLabel: false,
       })}>
       <Tab.Screen
-        name="Reservations"
-        component={ReservationsScreen}
+        name="Events"
+        component={EventsScreen}
         options={{ headerShown: false }}
       />
       <Tab.Screen

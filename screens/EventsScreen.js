@@ -10,7 +10,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { getId } from '../services/LocalStorage';
 import { convertISOToReadableDate, getAddressFromCoordinates } from '../utils/convertion';
 
-export const ReservationsScreen = ({ navigation }) => {
+export const EventsScreen = ({ navigation }) => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
@@ -79,7 +79,7 @@ export const ReservationsScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <SvgBackground />
-      <TitleView title="Mes Réservations" />
+      <TitleView title="Events" />
       <EventCardContainer>
         {events.length > 0 ? (
           events.map((event, index) => (
@@ -88,8 +88,9 @@ export const ReservationsScreen = ({ navigation }) => {
               title={event.name}
               address={getAddressFromCoordinates(event.lat, event.long)}
               dateTime={convertISOToReadableDate(event.timestamp)}
-              onJoin={() => {}}
               isJoined={event.isJoined}
+              eventId={event.id}
+              userId={userId}
             />
           ))
         ) : (
