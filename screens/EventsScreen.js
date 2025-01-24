@@ -15,7 +15,6 @@ export const EventsScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
 
-  // Récupérer l'ID utilisateur une fois au montage du composant
   useEffect(() => {
     const fetchUserId = async () => {
       try {

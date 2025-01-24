@@ -16,3 +16,20 @@ export const setId = async (token) => {
         AsyncStorage.removeItem('id')
     }
 }
+
+export const getEmail = async () => {
+  try {
+      const token = await AsyncStorage.getItem('email');
+      return token
+    } catch (err) {
+      console.error('Erreur lors de la récupération de l\'id', err);
+    }
+}
+
+export const setEmail = async (token) => {
+    if (token !== null) {
+        AsyncStorage.setItem('email', token)
+    } else {
+        AsyncStorage.removeItem('email')
+    }
+}

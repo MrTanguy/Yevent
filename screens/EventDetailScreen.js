@@ -12,7 +12,7 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import QRCode from 'react-native-qrcode-svg'; // Import de la bibliothèque pour le QR-code
+import QRCode from 'react-native-qrcode-svg';
 import supabase from '../services/SupabaseService';
 import { convertISOToReadableDate, getAddressFromCoordinates } from '../utils/convertion';
 import SvgBackground from '../components/SvgBackground';
@@ -33,7 +33,6 @@ export const EventDetailScreen = ({ route }) => {
       try {
         setLoading(true);
 
-        // Récupérer les informations de l'événement
         const { data: event, error: eventError } = await supabase
           .getClient()
           .from('events')
@@ -43,7 +42,6 @@ export const EventDetailScreen = ({ route }) => {
 
         if (eventError) throw new Error(eventError.message);
 
-        // Récupérer les informations de l'utilisateur pour cet événement
         const { data: userEvent, error: userEventError } = await supabase
           .getClient()
           .from('users_events')
@@ -193,7 +191,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
-    alignItems: 'center', // Centrer le contenu horizontalement
+    alignItems: 'center',
   },
   loadingContainer: {
     flex: 1,

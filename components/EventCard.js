@@ -8,7 +8,7 @@ const EventCard = ({ title, address, dateTime, isJoined, eventId, userId, isExpi
   const [showModal, setShowModal] = useState(false);
   const [numberOfSeats, setNumberOfSeats] = useState(1);
 
-  const navigation = useNavigation(); // Utilisation de la navigation
+  const navigation = useNavigation();
 
   const handleJoin = () => {
     setShowModal(true);

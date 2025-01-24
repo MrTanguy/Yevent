@@ -7,19 +7,22 @@ import EventCard from '../components/EventCard';
 import EventCardContainer from '../components/EventCardContainer';
 import supabase from '../services/SupabaseService';
 import { useFocusEffect } from '@react-navigation/native';
-import { getId } from '../services/LocalStorage';
+import { getId, getEmail } from '../services/LocalStorage';
 import { convertISOToReadableDate, getAddressFromCoordinates } from '../utils/convertion';
 
 export const ProfileScreen = ({ navigation }) => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
+  const [userEmail, setUserEmail] = useState(null);
 
   useEffect(() => {
     const fetchUserId = async () => {
       try {
         const id = await getId();
         setUserId(id);
+        const email = await getEmail();
+        setUserEmail(email)
       } catch (err) {
         console.error('Erreur lors de la récupération de l\'ID utilisateur :', err);
       }
@@ -80,7 +83,7 @@ export const ProfileScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <SvgBackground />
-      <TitleView title="Joined Events" />
+      <TitleView title={userEmail} />
       <EventCardContainer>
         {events.length > 0 ? (
           events.map((event, index) => (

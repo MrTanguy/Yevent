@@ -35,7 +35,6 @@ const MapScreen = () => {
     setErrorMsg(null);
 
     try {
-      // Récupérer la permission pour accéder à la localisation
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Permission refusée pour accéder à la localisation.');
@@ -43,7 +42,6 @@ const MapScreen = () => {
         return;
       }
 
-      // Obtenir la localisation actuelle
       const loc = await Location.getCurrentPositionAsync({});
       setLocation({
         latitude: loc.coords.latitude,
@@ -52,7 +50,6 @@ const MapScreen = () => {
         longitudeDelta: 0.0421,
       });
 
-      // Récupérer les événements depuis Supabase
       const { data, error } = await supabase.getClient().from('events').select('*');
       if (error) {
         setErrorMsg('Erreur lors de la récupération des événements.');
@@ -73,7 +70,6 @@ const MapScreen = () => {
   );
 
   const handleCalloutPress = (eventId, userId) => {
-    // Redirige vers la page de détail d'événement avec eventId et userId
     navigation.navigate('EventDetail', {
       eventId,
       userId,
