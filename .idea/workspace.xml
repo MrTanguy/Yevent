@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4bf81174-bad5-4927-a516-4293cafe1473" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/EventCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/EventCard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/MapScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/MapScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/EventDetailScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/EventDetailScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/EventsScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/EventsScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/HomeScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/HomeScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/navigation/navigation.js" beforeDir="false" afterPath="$PROJECT_DIR$/navigation/navigation.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/screens/ProfileScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/ProfileScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/LocalStorage.js" beforeDir="false" afterPath="$PROJECT_DIR$/services/LocalStorage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/styles/styles.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -10,7 +10,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const Tab = createBottomTabNavigator();
 const GlobalStack = createNativeStackNavigator();
 
-function TabNavigator() {
+function TabNavigator({onLogout}) {
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -56,9 +56,11 @@ function TabNavigator() {
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
         options={{ headerShown: false }}
-      />
+      >
+        {props => <ProfileScreen {...props} onLogout={onLogout} />}
+      </Tab.Screen>
+
     </Tab.Navigator>
   );
 }
@@ -69,9 +71,10 @@ export function MyStack({ onLogout }) {
       {/* Tab Navigator */}
       <GlobalStack.Screen
         name="MainTabs"
-        component={TabNavigator}
         options={{ headerShown: false }}
-      />
+      >
+        {props => <TabNavigator {...props} onLogout={onLogout} />}
+      </GlobalStack.Screen>
       {/* Global Screens */}
       <GlobalStack.Screen
         name="EventDetail"
@@ -81,3 +84,4 @@ export function MyStack({ onLogout }) {
     </GlobalStack.Navigator>
   );
 }
+
