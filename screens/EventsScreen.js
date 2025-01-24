@@ -91,6 +91,7 @@ export const EventsScreen = ({ navigation }) => {
               isJoined={event.isJoined}
               eventId={event.id}
               userId={userId}
+              isExpired={new Date(event.timestamp) < new Date()}
             />
           ))
         ) : (

@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, TextInput, Button } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import supabase from '../services/SupabaseService';
 
-const EventCard = ({ title, address, dateTime, isJoined, eventId, userId }) => {
+const EventCard = ({ title, address, dateTime, isJoined, eventId, userId, isExpired }) => {
   const [joined, setJoined] = useState(isJoined);
   const [showModal, setShowModal] = useState(false);
   const [numberOfSeats, setNumberOfSeats] = useState(1);
+
+  const navigation = useNavigation(); // Utilisation de la navigation
 
   const handleJoin = () => {
     setShowModal(true);
   };
 
   const handleConfirmJoin = async () => {
-
     const { data, error } = await supabase
       .getClient()
       .from('users_events')
@@ -32,21 +34,42 @@ const EventCard = ({ title, address, dateTime, isJoined, eventId, userId }) => {
     }
   };
 
+  const handleNavigateToDetails = () => {
+    if (!isExpired) {
+      navigation.navigate('EventDetail', {
+        eventId,
+        userId,
+      });
+    }
+  };
+
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={[
+        styles.card,
+        isExpired && styles.expiredCard, // Style assombri si l'événement est expiré
+      ]}
+      onPress={handleNavigateToDetails}
+      disabled={isExpired} // Désactive la carte si l'événement est expiré
+    >
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.address}>{address}</Text>
       <Text style={styles.dateTime}>{dateTime}</Text>
 
-      <TouchableOpacity
-        style={[styles.joinButton, joined && styles.joinedButton]}
-        onPress={handleJoin}
-        disabled={joined}
-      >
-        <Text style={styles.joinButtonText}>{joined ? 'Joined' : 'Join'}</Text>
-      </TouchableOpacity>
+      {!isExpired && (
+        <TouchableOpacity
+          style={[styles.joinButton, joined && styles.joinedButton]}
+          onPress={handleJoin}
+          disabled={joined}
+        >
+          <Text style={styles.joinButtonText}>{joined ? 'Joined' : 'Join'}</Text>
+        </TouchableOpacity>
+      )}
 
-      {/* Modale pour choisir le nombre de places */}
+      {isExpired && (
+        <Text style={styles.expiredText}>Event Expired</Text>
+      )}
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -67,7 +90,7 @@ const EventCard = ({ title, address, dateTime, isJoined, eventId, userId }) => {
           </View>
         </View>
       </Modal>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -82,6 +105,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  expiredCard: {
+    backgroundColor: '#E0E0E0', // Fond grisé
+    opacity: 0.7, // Assombrissement
   },
   title: {
     fontSize: 18,
@@ -114,11 +141,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
+  expiredText: {
+    color: '#B0B0B0',
+    fontSize: 14,
+    fontStyle: 'italic',
+    marginTop: 10,
+    textAlign: 'center',
+  },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparence de fond
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     backgroundColor: '#fff',

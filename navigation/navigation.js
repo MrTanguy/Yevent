@@ -1,14 +1,16 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '../screens/HomeScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { EventsScreen } from '../screens/EventsScreen';
-import { Button } from 'react-native';
+import { EventDetailScreen } from '../screens/EventDetailScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator();
+const GlobalStack = createNativeStackNavigator();
 
-export function MyStack({ onLogout }) {
+function TabNavigator() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -40,7 +42,8 @@ export function MyStack({ onLogout }) {
           borderTopWidth: 0,
         },
         tabBarShowLabel: false,
-      })}>
+      })}
+    >
       <Tab.Screen
         name="Events"
         component={EventsScreen}
@@ -57,5 +60,24 @@ export function MyStack({ onLogout }) {
         options={{ headerShown: false }}
       />
     </Tab.Navigator>
+  );
+}
+
+export function MyStack({ onLogout }) {
+  return (
+    <GlobalStack.Navigator>
+      {/* Tab Navigator */}
+      <GlobalStack.Screen
+        name="MainTabs"
+        component={TabNavigator}
+        options={{ headerShown: false }}
+      />
+      {/* Global Screens */}
+      <GlobalStack.Screen
+        name="EventDetail"
+        component={EventDetailScreen}
+        options={{ headerShown: false }}
+      />
+    </GlobalStack.Navigator>
   );
 }

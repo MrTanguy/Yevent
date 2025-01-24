@@ -24,7 +24,7 @@ export const getAddressFromCoordinates = async (latitude, longitude) => {
     const address = geocodedAddress[0];
 
     // Concaténation des éléments de l'adresse
-    return `${address.street || ''} ${address.streetNumber || ''}, ${address.city || ''}`;
+    return `${address.streetNumber || ''} ${address.street || ''}, ${address.city || ''}`;
   } catch (error) {
     console.error("Erreur lors du géocodage inversé :", error);
     throw new Error("Impossible de convertir les coordonnées en adresse.");

@@ -1,15 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import supabase from '../services/SupabaseService'; // Assure-toi d'avoir configuré Supabase
 import { useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { getId } from '../services/LocalStorage';
+
 
 const MapScreen = () => {
   const [location, setLocation] = useState(null);
-  const [events, setEvents] = useState([]); // État pour stocker les événements
+  const [events, setEvents] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
+
+    useEffect(() => {
+      const fetchUserId = async () => {
+        try {
+          const id = await getId();
+          setUserId(id);
+        } catch (err) {
+          console.error('Erreur lors de la récupération de l\'ID utilisateur :', err);
+        }
+      };
+
+      fetchUserId();
+    }, []);
+
+  const navigation = useNavigation();
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -49,9 +68,17 @@ const MapScreen = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchData(); // Appeler la fonction de récupération des données lorsque l'écran est actif
+      fetchData();
     }, [])
   );
+
+  const handleCalloutPress = (eventId, userId) => {
+    // Redirige vers la page de détail d'événement avec eventId et userId
+    navigation.navigate('EventDetail', {
+      eventId,
+      userId,
+    });
+  };
 
   if (isLoading) {
     return (
@@ -82,6 +109,7 @@ const MapScreen = () => {
                 }}
                 title={event.name}
                 description={event.address}
+                onCalloutPress={() => handleCalloutPress(event.id, userId)} // Redirection sur le clic du titre
               />
             ))}
           </MapView>
